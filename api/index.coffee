@@ -4,23 +4,29 @@ env = require 'node-env-file'
 env envFile if fs.existsSync envFile = path.resolve __dirname, '../.env'
 express = require "express"
 bodyParser = require 'body-parser'
-{ helpers, notFound, locals, setUser, errorHandler } = require './lib/middleware'
+users = require './resources/users/routes'
+posts = require './resources/posts/routes'
+{ helpers, notFound, locals, setUser, errorHandler,
+  loginRequired } = require './lib/middleware'
 
 app = module.exports = express()
 
 # Middleware
 app.use helpers
-app.use locals
-app.use setUser
 app.use bodyParser.json()
-app.use bodyParser.urlencoded()
 
-# Apps
-app.use require './apps/root'
-app.use require './apps/users'
-app.use require './apps/posts'
+# Users
+app.delete '/users/me', users.deleteMe
+app.use users.set
+app.get '/users/me', users.me
+
+# Posts
+app.get '/posts', posts.index
+app.get '/posts/:id', posts.find, posts.get
+app.post '/posts', posts.post
+app.put '/posts/:id', posts.find, posts.put
+app.delete '/posts/:id', posts.find, posts.delete
 
 # Moar middleware
 app.use errorHandler
-app.use express.static __dirname + '/public'
 app.use notFound

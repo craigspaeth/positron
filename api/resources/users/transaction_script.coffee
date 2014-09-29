@@ -7,12 +7,8 @@ _ = require 'underscore'
 async = require 'async'
 db = require '../../lib/db'
 request = require 'superagent'
+{ ObjectId } = require 'mongojs'
 { ARTSY_URL } = process.env
-
-# Finds or creates a user from an Artsy access token.
-#
-# @param accessToken {String}
-# @param callback {Function}
 
 @fromAccessToken = (accessToken, callback) ->
 
@@ -44,9 +40,10 @@ request = require 'superagent'
         ], (err, results) ->
 
           # Flatten the various user datas and clean out HAL properties
+          user._id = ObjectId user.id
+          user.access_token = accessToken
           user.profile = results[0]
           user.details = results[1]
-          delete user._id
           delete user.profile._links
           delete user.details._links
           delete user._links
@@ -56,5 +53,13 @@ request = require 'superagent'
             return callback err if err
             callback null, user
 
-@present = (user) ->
-  _.omit user, '_id', 'access_token'
+@destroyFromAccessToken = (accessToken, callback) ->
+  db.users.findOne { access_token: accessToken }, (err, user) ->
+    return callback err if err
+    db.users.remove { access_token: accessToken }, (err, res) ->
+      callback err, user
+
+@present = (data) ->
+  user = {}
+  user.id = data._id
+  _.omit _.extend(user, data), '_id', 'access_token'
