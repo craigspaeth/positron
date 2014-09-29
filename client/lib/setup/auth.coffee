@@ -7,7 +7,6 @@ Backbone = require 'backbone'
 passport = require 'passport'
 OAuth2Strategy = require 'passport-oauth2'
 CurrentUser = require '../../models/current_user'
-{ gravity } = require '../apis'
 
 passport.use 'artsy', new OAuth2Strategy
   authorizationURL: process.env.ARTSY_URL + '/oauth2/authorize'
@@ -16,18 +15,9 @@ passport.use 'artsy', new OAuth2Strategy
   clientSecret: process.env.ARTSY_SECRET
   callbackURL: process.env.APP_URL + '/auth/artsy/callback'
 , (accessToken, refreshToken, profile, done) ->
-  gravity.new CurrentUser, 'current_user',
-    headers: { 'X-Access-Token': accessToken }
-  , (err, user) ->
-    return done err if err
-    gravity.new Backbone.Model, 'current_user.profile',
-      headers: { 'X-Access-Token': accessToken }
-    , (err, profile) ->
-      return done err if err
-      user.set profile: profile.toJSON(), accessToken: accessToken
-      done null, user
+  # TODO: Pull from API db.
 
-passport.serializeUser (user, done) -> 
+passport.serializeUser (user, done) ->
   done null, user.pick 'id', 'name', 'profile', 'accessToken'
 
 passport.deserializeUser (userData, done) ->

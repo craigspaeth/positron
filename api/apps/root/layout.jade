@@ -1,0 +1,16 @@
+mixin auth-required(extended)
+  p
+    :markdown
+      **Authenticated—**An `X-Access-Token` header is required#{extended}.
+
+doctype html
+html(lang="en")
+  head
+    title API Documentation
+    link( type='text/css' rel='stylesheet' href='/api/base.css' )
+  body
+    block body
+    unless PATH == '/'
+      br
+      hr
+      a( href=API_PATH ) Home

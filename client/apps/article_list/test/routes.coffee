@@ -1,19 +1,14 @@
 routes = require '../routes'
 _ = require 'underscore'
 Backbone = require 'backbone'
-{ spooky } = require '../../../lib/apis'
 sinon = require 'sinon'
 fixtures = require '../../../test/helpers/fixtures'
 
 describe 'routes', ->
 
   beforeEach ->
-    sinon.stub spooky, 'new'
     @req = { query: {} }
     @res = { render: sinon.stub(), locals: sd: {} }
-
-  afterEach ->
-    spooky.new.restore()
 
   describe '#articles', ->
 

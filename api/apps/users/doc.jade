@@ -1,0 +1,43 @@
+extends ../root/layout
+
+block body
+  h1 Users
+  :markdown
+    Expanded Artsy [user data](https://developers.artsy.net/docs/users) merged with Artsy Writer user data.
+
+  h2 GET #{API_PATH}/users/me
+  :markdown
+    Retrieve your user based on your `X-Access-Token` header.
+  +auth-required
+  p Example response:
+  pre.
+    {
+      "id": "4d8cd73191a5c50ce200002a",
+      "name": "Craig Spaeth",
+      "profile": {
+        "id": "5086df098523e60002000012",
+        "created_at": "2012-10-23T18:16:41+00:00",
+        "updated_at": "2014-09-24T20:38:41+00:00",
+        "handle": "craig",
+        "location": "New York, New York",
+        "description": "Developer at Artsy. My heart swoons for code, art, & indie games.",
+        "image_versions": [
+          "square140"
+        ]
+      },
+      "details": {
+        "id": "4d8cd73191a5c50ce200002a",
+        "created_at": "2011-07-18T17:53:47+00:00",
+        "updated_at": "2014-09-28T01:25:23+00:00",
+        "type": "User",
+        "email": "craigspaeth@gmail.com",
+        "birthday": null,
+        "phone": "",
+        "gender": null
+      }
+    }
+
+  h2 DELETE #{API_PATH}/users/:id
+  :markdown
+    Delete a user. Use this to delete the session and "log out" a user.
+  +auth-required
