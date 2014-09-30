@@ -15,11 +15,11 @@ antigravity = require 'antigravity'
 @spooky = express()
 @spooky.get "/", (req, res) -> res.send
   _links:
-    articles:
-      href: "http://localhost:5000/__spooky/api/articles"
-@spooky.get "/api/articles", (req, res) -> res.send
+    posts:
+      href: "http://localhost:5000/__spooky/api/posts"
+@spooky.get "/api/posts", (req, res) -> res.send
   _embedded:
-    articles: [fixtures.article]
+    posts: [fixtures.post]
 
 # Spawns a child process with ENV variables that will launch it in "test"
 # mode. This includes an API_URL that points to the fake API server mounted

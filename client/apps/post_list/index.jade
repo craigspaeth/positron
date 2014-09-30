@@ -1,0 +1,31 @@
+extend ../../components/layout/templates/index
+
+block content
+  h1.page-header
+    if published
+      .max-width-container Published Posts
+    else
+      .max-width-container Drafts
+  #post-list-items.max-width-container
+    ul
+      for post in posts
+        li
+          .post-list-item-left
+            img( src='http://placekitten.com/500/340' )
+          .post-list-item-right
+            .post-list-item-tags
+              if post.get('tags')
+                = post.get('tags').join(' ')
+              else
+                span.post-list-missing Missing tags
+            h1= post.get('title')
+            if post.get('teaser')
+              h2= post.get('teaser')
+            else
+              h2.post-list-missing Missing teaser
+            .post-list-items-dates
+              if post.get('published_at')
+                strong Published #{moment(post.get('published_at')).fromNow()}
+                | Last saved #{moment(post.get('updated_at')).fromNow()}
+              else
+                strong Last saved #{moment(post.get('updated_at')).fromNow()}

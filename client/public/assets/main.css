@@ -240,42 +240,42 @@ body {
   padding: 0 35px;
   margin: auto;
 }
-#article-list-items li {
+#post-list-items li {
   margin-top: 35px;
   line-height: 26px;
 }
-#article-list-items li h1 {
+#post-list-items li h1 {
   font-size: 20px;
 }
-#article-list-items li img {
+#post-list-items li img {
   width: 130px;
   margin-right: 20px;
 }
-.article-list-item-left,
-.article-list-item-right {
+.post-list-item-left,
+.post-list-item-right {
   display: inline-block;
   vertical-align: top;
 }
-.article-list-item-tags,
-.article-list-items-dates {
+.post-list-item-tags,
+.post-list-items-dates {
   font-family: 'ITC Avant Garde Gothic W04', 'AvantGardeGothicITCW01D 731075', 'AvantGardeGothicITCW01Dm', 'Helvetica', 'sans-serif';
   -webkit-font-smoothing: antialiased;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-size: 10px;
 }
-.article-list-item-tags {
+.post-list-item-tags {
   line-height: 10px;
   margin-bottom: 5px;
 }
-.article-list-items-dates {
+.post-list-items-dates {
   display: inline-block;
   color: #999;
 }
-.article-list-items-dates strong {
+.post-list-items-dates strong {
   margin-right: 10px;
   color: #000;
 }
-.article-list-missing {
+.post-list-missing {
   color: #999;
 }

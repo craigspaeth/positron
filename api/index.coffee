@@ -6,6 +6,7 @@ express = require "express"
 bodyParser = require 'body-parser'
 users = require './resources/users/routes'
 posts = require './resources/posts/routes'
+morgan = require 'morgan'
 { helpers, notFound, locals, setUser, errorHandler,
   loginRequired } = require './lib/middleware'
 
@@ -13,7 +14,11 @@ app = module.exports = express()
 
 # Middleware
 app.use helpers
+app.use bodyParser.urlencoded()
 app.use bodyParser.json()
+app.use morgan(
+  if process.env.NODE_ENV is 'development' then 'dev' else 'combined'
+)
 
 # Users
 app.delete '/users/me', users.deleteMe

@@ -1,22 +1,22 @@
 CurrentUser = require '../../models/current_user'
 { fabricate2 } = require 'antigravity'
 
-@article =
+@post =
   id: 2
-  cache_key: "articles/2-20140718213304818947000"
+  cache_key: "posts/2-20140718213304818947000"
   title: "The art in Copenhagen is soo over"
   sections_count: 0
   created_at: "2014-07-18 17:33:04 -0400"
   updated_at: "2014-07-18 17:33:04 -0400"
   _links:
     self:
-      href: "http://spooky-production.herokuapp.com/api/articles/2"
+      href: "http://spooky-production.herokuapp.com/api/posts/2"
 
     sections_url:
-      href: "http://spooky-production.herokuapp.com/api/articles/2/sections"
+      href: "http://spooky-production.herokuapp.com/api/posts/2/sections"
 
-    articles_url:
-      href: "http://spooky-production.herokuapp.com/api/articles"
+    posts_url:
+      href: "http://spooky-production.herokuapp.com/api/posts"
 
     root_url:
       href: "http://spooky-production.herokuapp.com/"

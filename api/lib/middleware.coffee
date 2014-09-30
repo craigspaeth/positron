@@ -33,4 +33,4 @@ UNKNOWN_ERROR = "Unknown failure. " +
   console.log err.stack
   res.err
     status: err.status
-    devMessage: err.message or err.toString() + err.stack
+    devMessage: err.message or err.toString()

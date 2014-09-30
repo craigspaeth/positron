@@ -2,7 +2,7 @@
 # Transaction script for the posts collection.
 # http://martinfowler.com/eaaCatalog/transactionScript.html
 #
-# Example:
+# Example Schema:
 # {
 #   id: '54276766fd4f50996aeca2b8'
 #   title: 'Top Ten Booths',

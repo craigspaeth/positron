@@ -15,22 +15,30 @@ passport.use 'artsy', new OAuth2Strategy
   clientSecret: process.env.ARTSY_SECRET
   callbackURL: process.env.APP_URL + '/auth/artsy/callback'
 , (accessToken, refreshToken, profile, done) ->
-  # TODO: Pull from API db.
+  passport.deserializeUser accessToken, done
 
 passport.serializeUser (user, done) ->
-  done null, user.pick 'id', 'name', 'profile', 'accessToken'
+  done null, user.get 'access_token'
 
-passport.deserializeUser (userData, done) ->
-  done null, new CurrentUser userData
+passport.deserializeUser (accessToken, done) ->
+  new CurrentUser(access_token: accessToken).fetch
+    error: (m, res) -> done res.error
+    success: (user) -> done null, user
 
 module.exports = (app) ->
   app.use passport.initialize()
   app.use passport.session()
+
+  # Set up some routes that ensures the user logs in.
   app.get '/login', passport.authenticate('artsy')
   app.get '/auth/artsy/callback', passport.authenticate 'artsy',
     successRedirect: '/'
     failureRedirect: '/login'
-  app.get '/logout', (req, res) ->
-    res.redirect sd.ARTSY_URL
+  app.get '/logout', (req, res, next) ->
+    req.user.destroy
+      error: (m, r) -> next r
+      success: ->
+        req.logout()
+        res.redirect sd.FORCE_URL
   app.use (req, res, next) ->
     if req.user? then next() else res.redirect '/login'

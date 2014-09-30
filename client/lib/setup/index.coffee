@@ -13,16 +13,14 @@ Backbone = require 'backbone'
 sharify = require 'sharify'
 path = require 'path'
 fs = require 'fs'
-helperMiddleware = require '../helper_middleware'
 setupEnv = require './env'
 setupAuth = require './auth'
+{ locals, errorHandler } = require '../middleware'
 
 module.exports = (app) ->
 
   # Override Backbone to use server-side sync
   Backbone.sync = require 'backbone-super-sync'
-  Backbone.sync.editRequest = (req) ->
-    req.query 'token': process.env.SPOOKY_TOKEN
 
   # Mount generic middleware & run setup modules
   setupEnv app
@@ -32,14 +30,11 @@ module.exports = (app) ->
   app.use bodyParser.urlencoded()
   app.use session secret: process.env.SESSION_SECRET
   setupAuth app
-  app.use helperMiddleware
+  app.use locals
 
   # Mount apps
-  app.use '/', require '../../apps/article_list'
-  # TODO: Replace with proper app that renders errors
-  app.use (err, req, res, next) ->
-    console.log err
-    res.status(err.status).send err.toString()
+  app.use '/', require '../../apps/post_list'
+  app.use errorHandler
 
   # Mount static middleware for sub apps, components, and project-wide
   fs.readdirSync(path.resolve __dirname, '../../apps').forEach (fld) ->

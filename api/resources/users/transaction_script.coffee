@@ -31,12 +31,19 @@ request = require 'superagent'
             request
               .get(user._links.profile.href)
               .set('X-Access-Token': accessToken)
-              .end (err, res) -> cb err, res.body
+              .end (err, res) -> cb err, res?.body
           (cb) ->
             request
               .get(user._links.user_details.href)
               .set('X-Access-Token': accessToken)
-              .end (err, res) -> cb err, res.body
+              .end (err, res) -> cb err, res?.body
+          # TODO: APIv2 is returning broken profile images. Remove once fixed.
+          (cb) ->
+            id = _.last user._links.profile.href.split('/')
+            request
+              .get("#{ARTSY_URL}/api/v1/profile/#{id}")
+              .set('X-Access-Token': accessToken)
+              .end (err, res) -> cb err, res?.body
         ], (err, results) ->
 
           # Flatten the various user datas and clean out HAL properties
@@ -44,6 +51,7 @@ request = require 'superagent'
           user.access_token = accessToken
           user.profile = results[0]
           user.details = results[1]
+          user.profile.icon_url = _.first _.values results[2].icon.image_urls
           delete user.profile._links
           delete user.details._links
           delete user._links
@@ -62,4 +70,4 @@ request = require 'superagent'
 @present = (data) ->
   user = {}
   user.id = data._id
-  _.omit _.extend(user, data), '_id', 'access_token'
+  _.omit _.extend(user, data), '_id'

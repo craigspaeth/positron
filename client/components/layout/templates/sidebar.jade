@@ -7,13 +7,13 @@ nav#layout-sidebar
     include ../public/icons/layout_new_post.svg
     br
     | New Post
-  a( href='/articles?state=0'
-     class=(sd.URL == '/articles?state=0' ? 'is-active' : '') )
+  a( href='/posts?published=false'
+     class=(sd.URL == '/posts?published=false' ? 'is-active' : '') )
     include ../public/icons/layout_drafts.svg
     br
     | Drafts
-  a( href='/articles?state=1'
-     class=(sd.URL == '/articles?state=1' ? 'is-active' : '') )
+  a( href='/posts?published=true'
+     class=(sd.URL == '/posts?published=true' ? 'is-active' : '') )
     include ../public/icons/layout_published.svg
     br
     | Published
@@ -22,7 +22,7 @@ nav#layout-sidebar
     br
     | Help
   #layout-sidebar-profile
-    img( src=(user.get('profile')._links.thumbnail.href) )
+    img( src=(user.get('profile').icon_url) )
     br
     = user.get('name').split(' ')[0]
     nav#layout-sidebar-profile-menu
