@@ -3,6 +3,8 @@
 # http://martinfowler.com/eaaCatalog/transactionScript.html
 #
 
+return
+
 _ = require 'underscore'
 async = require 'async'
 db = require '../../lib/db'
