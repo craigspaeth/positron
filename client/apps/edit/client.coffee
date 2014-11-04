@@ -17,6 +17,6 @@ SectionList = require './components/section_list/index.coffee'
   new EditHeader el: $('#edit-header'), article: article
   new EditThumbnail el: $('#edit-thumbnail'), article: article
   React.renderComponent(
-    SectionList(sections: article.sections)
+    SectionList(sections: article.get 'sections')
     $('#edit-sections')[0]
   )

@@ -15,29 +15,29 @@ module.exports = React.createClass
   toggle: ->
     @setState open: not @state.open
 
-  newSection: (type) -> =>
+  onNewSection: (type) -> =>
     switch type
       when 'text'
-        @props.sections.add {
+        @props.onNewSection {
           type: 'text'
           body: ''
-        }, at: @props.index + 1
+        }
       when 'artworks'
-        @props.sections.add {
+        @props.onNewSection {
           type: 'artworks'
           ids: []
           layout: 'column_width'
-        }, at: @props.index + 1
+        }
       when 'image'
-        @props.sections.add {
+        @props.onNewSection {
           type: 'image'
           url: ''
-        }, at: @props.index + 1
+        }
       when 'video'
-        @props.sections.add {
+        @props.onNewSection {
           type: 'video'
           url: ''
-        }, at: @props.index + 1
+        }
     @setState open: false
 
   render: ->
@@ -54,7 +54,7 @@ module.exports = React.createClass
       ul { className: 'edit-section-tool-menu' },
         li {
           className: 'edit-section-tool-text'
-          onClick: @newSection('text')
+          onClick: @onNewSection('text')
         }, 'Text',
           div {
             className: 'edit-menu-icon-text'
@@ -62,7 +62,7 @@ module.exports = React.createClass
           }
         li {
           className: 'edit-section-tool-artworks'
-          onClick: @newSection('artworks')
+          onClick: @onNewSection('artworks')
         }, 'Artworks',
           div {
             className: 'edit-menu-icon-artworks'
@@ -70,7 +70,7 @@ module.exports = React.createClass
           }
         li {
           className: 'edit-section-tool-image'
-          onClick: @newSection('image')
+          onClick: @onNewSection('image')
         }, 'Image',
           div {
             className: 'edit-menu-icon-image'
@@ -78,7 +78,7 @@ module.exports = React.createClass
           }
         li {
           className: 'edit-section-tool-video'
-          onClick: @newSection('video')
+          onClick: @onNewSection('video')
         }, 'Video',
           div {
             className: 'edit-menu-icon-video'

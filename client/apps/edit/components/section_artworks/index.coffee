@@ -18,11 +18,11 @@ module.exports = React.createClass
 
   getInitialState: ->
     urlsValue: ''
-    artworks: []
+    artworks: @props.section.artworks
     loadingUrls: false
 
   componentDidMount: ->
-    ids = @props.section.get('ids')
+    ids = @props.section.ids
     return if not ids?.length or @state.artworks.length
     @fetchArtworks ids
 
@@ -51,15 +51,12 @@ module.exports = React.createClass
       $(this).width('auto').find('.esa-img-container').height 'auto'
 
   onClickOff: ->
-    ids = (artwork.artwork.id for artwork in @state.artworks)
-    return @props.section.destroy() if ids.length is 0
-    @props.section.set ids: ids, layout: @props.layout
+    return @props.onRemoveSection() if @state.artworks.length is 0
 
   addArtworksFromUrls: (e) ->
     e.preventDefault()
     slugs = (_.last(url.split '/') for url in @state.urlsValue.split '\n')
     @fetchArtworks slugs
-    @props.section.set ids: _.pluck @state.artworks, 'id'
 
   fetchArtworks: (ids) ->
     @setState loadingUrls: true
@@ -83,7 +80,7 @@ module.exports = React.createClass
   render: ->
     div {
       className: 'edit-section-artworks-container'
-      onClick: @props.setEditing(on)
+      onClick: @props.onSetEditing(on)
     },
       div { className: 'esa-controls-container edit-section-controls' },
         nav {},
@@ -93,7 +90,7 @@ module.exports = React.createClass
               'background-size': '38px'
             }
             className: 'esa-overflow-fillwidth'
-            onClick: @props.changeLayout('overflow_fillwidth')
+            onClick: @props.onChangeLayout('overflow_fillwidth')
           }
           a {
             style: {
@@ -101,7 +98,7 @@ module.exports = React.createClass
               'background-size': '22px'
             }
             className: 'esa-column-width'
-            onClick: @props.changeLayout('column_width')
+            onClick: @props.onChangeLayout('column_width')
         }
         section { className: 'esa-inputs' },
           h1 {}, 'Add artworks to this section'

@@ -16,8 +16,8 @@ React = require 'react'
 module.exports = React.createClass
 
   onClickOff: ->
-    @props.section.set body: $(@refs.editable.getDOMNode()).html()
-    @props.section.destroy() if $(@props.section.get('body')).text() is ''
+    @props.section.body = $(@refs.editable.getDOMNode()).html()
+    # @props.section.destroy() if $(@props.section.get('body')).text() is ''
 
   attachScribe: ->
     return unless @props.editing
@@ -51,7 +51,7 @@ module.exports = React.createClass
       div {
         className: 'edit-section-text-editable'
         ref: 'editable'
-        dangerouslySetInnerHTML: __html: @props.section.get('body')
-        onClick: @props.setEditing(on)
-        onFocus: @props.setEditing(on)
+        dangerouslySetInnerHTML: __html: @props.section.body
+        onClick: @props.onSetEditing(on)
+        onFocus: @props.onSetEditing(on)
       }

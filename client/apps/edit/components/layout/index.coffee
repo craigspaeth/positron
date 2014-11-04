@@ -11,7 +11,6 @@ module.exports = class EditLayout extends Backbone.View
     { @article } = options
     @$window = $(window)
     @article.sync = _.debounce _.bind(@article.sync, @article), 1000
-    @article.sections.on 'change', => @article.save()
     @article.on 'missing', @highlightMissingFields
     @article.on 'finished', @onFinished
     @$window.on 'scroll', _.throttle @popLockControls, 100

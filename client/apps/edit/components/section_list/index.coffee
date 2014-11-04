@@ -3,6 +3,7 @@
 # section components that get rendered.
 #
 
+_ = require 'underscore'
 SectionContainer = -> require('../section_container/index.coffee') arguments...
 SectionTool = -> require('../section_tool/index.coffee') arguments...
 React = require 'react'
@@ -11,36 +12,33 @@ React = require 'react'
 module.exports = React.createClass
 
   getInitialState: ->
-    { editingIndex: null }
+    editingIndex: null, sections: @props.sections
 
-  componentDidMount: ->
-    @props.sections.on 'remove', => @forceUpdate()
-    @props.sections.on 'add', @onNewSection
+  onSetEditing: (i) -> (editing) => =>
+    @setState editingIndex: if editing then i else null
 
-  componentWillUnmount: ->
-    @props.sections.off()
+  onNewSection: (i) -> (section) =>
+    @state.sections.splice i, 0, section
+    @setState sections: @state.sections, editingIndex: i
 
-  onSetEditing: (i) ->
-    @setState editingIndex: i
-
-  onNewSection: (section) ->
-    @setState editingIndex: @props.sections.indexOf section
+  onRemoveSection: (i) -> =>
+    @state.sections.splice i, 1
+    @setState sections: @state.sections, editingIndex: null
 
   render: ->
     div {},
       div {
-        className: 'edit-section-list' + (' esl-children' if @props.sections.length)
+        className: 'edit-section-list' + (' esl-children' if @state.sections.length)
         ref: 'sections'
       },
-        SectionTool { sections: @props.sections }
-        @props.sections.map (section, i) =>
+        SectionTool { onNewSection: @onNewSection(@state.sections.length) }
+        for section, i in @state.sections
           [
             SectionContainer {
               section: section
-              key: i
               editing: @state.editingIndex is i
-              ref: 'section' + 1
-              onSetEditing: @onSetEditing
+              onSetEditing: @onSetEditing(i)
+              onRemoveSection: @onRemoveSection(i)
             }
-            SectionTool { sections: @props.sections, index: i }
+            SectionTool { onNewSection: @onNewSection(i + 1) }
           ]
