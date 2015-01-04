@@ -113,18 +113,15 @@ toQuery = (input, callback) ->
 #
 # Persistence
 #
-@save = (input, cb) ->
+@save = (input, callback) ->
   id = ObjectId (input.id or input._id)?.toString()
   validate input, (err, input) =>
-    return cb err if err
-    @find id.toString(), (err, article = {}) =>
-      return cb err if err
+    return callback err if err
+    @find id, (err, article) =>
+      return callback err if err
       update article, input, (err, article) =>
-        return cb err if err
-        db.articles.save _.extend(article,
-          _id: id
-          author_id: ObjectId(article.author_id)
-        ), cb
+        return callback err if err
+        db.articles.save article, callback
 
 validate = (input, callback) ->
   whitelisted = _.pick input, _.keys schema
@@ -132,20 +129,30 @@ validate = (input, callback) ->
   Joi.validate whitelisted, schema, callback
 
 update = (article, input, callback) ->
-  article = _.extend article, input, updated_at: moment().format()
-  getSlug article, (err, slug) ->
+  article = _.extend (article or {}), input, updated_at: moment().format()
+  User.find article.author_id, (err, author) ->
     return callback err if err
-    article.slugs ?= []
-    article.slugs.push slug unless slug in article.slugs
-    callback null, article
+    article = setSlug article, author
+    article = denormalizeAuthor article, author
+    callback null, _.extend article,
+      author_id: ObjectId article.author_id
 
-getSlug = (article, callback) ->
-  return callback null, article.slug if article.slug
+denormalizeAuthor = (article, author) ->
+  if author? and author._id isnt article.author_id 
+    article.author = { name: author.user.name }
+  article
+
+setSlug = (article, author) ->
   titleSlug = _s.slugify(article.title).split('-')[0..7].join('-')
-  return callback null, titleSlug unless article.author_id
-  User.find article.author_id, (err, user) ->
-    return callback null, titleSlug unless user
-    callback err, _s.slugify(user.user.name) + '-' + titleSlug
+  if article.slug
+    slug = article.slug
+  else if author
+    slug = _s.slugify(author.user.name) + '-' + titleSlug
+  else
+    slug = titleSlug
+  article.slugs ?= []
+  article.slugs.push slug unless slug in article.slugs
+  article
 
 @syncToPost = (article, accessToken, callback) ->
 
