@@ -3,7 +3,7 @@ Artwork = require './model'
 
 # GET /api/artworks
 @index = (req, res, next) ->
-  Artwork.findByIds req.query.ids, req.get('x-access-token'), (err, artworks) ->
+  Artwork.findByIds req.query.ids, (err, artworks) ->
     return next err if err
     res.send results: artworks
 

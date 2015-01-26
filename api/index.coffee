@@ -28,9 +28,9 @@ app.post '/articles', authenticated
 app.put '/articles/:id', authenticated
 app.delete '/articles/:id', authenticated
 app.use require './apps/articles'
+app.use require './apps/artworks'
 app.use authenticated
 app.use require './apps/users'
-app.use require './apps/artworks'
 app.use require './apps/artists'
 
 # Webhook for tasks for debugging purpose (to be removed)
