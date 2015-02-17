@@ -18,16 +18,16 @@ request = require 'superagent'
 #
 # Schemas
 #
-schema = (->
-  author_id: @objectId().required()
-  tier: @number().default(2)
+inputSchema = (->
+  author_id: @objectId()
+  tier: @number()
   slug: @string().allow(null)
   thumbnail_title: @string().allow('', null)
   thumbnail_teaser: @string().allow('', null)
   thumbnail_image: @string().allow('', null)
   tags: @array().includes(@string())
   title: @string().allow('', null)
-  published: @boolean().default(false)
+  published: @boolean()
   lead_paragraph: @string().allow('', null)
   gravity_id: @objectId().allow('', null)
   fair_id: @objectId().allow('', null)
@@ -49,11 +49,22 @@ schema = (->
     @object().keys
       type: @string().valid('slideshow')
       items: @array()
-  ]).default([])
+  ])
   primary_featured_artist_ids: @array().includes @objectId()
   featured_artist_ids: @array().includes @objectId()
   featured_artwork_ids: @array().includes @objectId()
 ).call Joi
+
+articleSchema = (-> @object().keys(inputSchema).keys(
+  _id: @object().type(ObjectId)
+  author_id: @object().type(ObjectId).required()
+  fair_id: @object().type(ObjectId)
+  published_at: @date()
+  updated_at: @date()
+  published: @boolean().default(false)
+  tier: @number().default(2)
+  sections: @array().default([])
+)).call Joi
 
 querySchema = (->
   author_id: @objectId()
@@ -114,39 +125,36 @@ sortParamToQuery = (input) ->
   sort
 
 @find = (id, callback) ->
+  return callback() unless id
   query = if ObjectId.isValid(id) then { _id: ObjectId(id) } else { slugs: id }
   db.articles.findOne query, callback
 
 #
 # Persistence
 #
-@save = (input, cb) ->
-  id = ObjectId (input.id or input._id)?.toString()
-  @validate input, (err, input) =>
-    return cb err if err
-    @find id.toString(), (err, article = {}) =>
-      return cb err if err
+@save = (input, callback) ->
+  Joi.validate input, inputSchema, (err, input) =>
+    return callback err if err
+    @find (input.id or input._id), (err, article = {}) =>
+      return callback err if err
       update article, input, (err, article) =>
-        return cb err if err
-        db.articles.save _.extend(article, _id: id), cb
-
-@validate = (input, callback) ->
-  whitelisted = _.pick input, _.keys schema
-  Joi.validate whitelisted, schema, (err, article) ->
-    callback err, _.extend article,
-      author_id: ObjectId(article.author_id)
-      fair_id: ObjectId(article.fair_id) if article.fair_id
+        return callback err if err
+        db.articles.save article, callback
 
 update = (article, input, callback) ->
   article = _.extend article, input,
     updated_at: new Date
     published_at: if input.published and not article.published then \
-      new Date else new Date article.published_at
-  getSlug article, (err, slug) ->
+      new Date else article.published_at
+    author_id: ObjectId(input.author_id) if input.author_id
+    fair_id: ObjectId(input.fair_id) if input.fair_id
+  Joi.validate article, articleSchema, (err, article) =>
     return callback err if err
-    article.slugs ?= []
-    article.slugs.push slug unless slug in article.slugs
-    callback null, article
+    getSlug article, (err, slug) ->
+      return callback err if err
+      article.slugs ?= []
+      article.slugs.push slug unless slug in article.slugs
+      callback null, article
 
 getSlug = (article, callback) ->
   return callback null, article.slug if article.slug
