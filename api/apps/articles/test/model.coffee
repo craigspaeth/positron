@@ -205,7 +205,7 @@ describe 'Article', ->
       fabricate 'users', { user: { name: 'Molly' } }, (err, @user) ->
         Article.save {
           title: 'Foo Baz'
-          author_id: @user._id
+          author_id: @user._id.toString()
         }, (err, article) ->
           return done err if err
           article.slugs[0].should.equal 'molly-foo-baz'
@@ -215,13 +215,13 @@ describe 'Article', ->
       fabricate 'users', { user: { name: 'Molly' } }, (err, @user) ->
         Article.save {
           title: 'Foo Baz'
-          author_id: @user._id
+          author_id: @user._id.toString()
         }, (err, article) =>
           return done err if err
           Article.save {
             id: article._id.toString()
             title: 'Foo Bar Baz'
-            author_id: @user._id
+            author_id: @user._id.toString()
           }, (err, article) ->
             return done err if err
             article.slugs.join('').should.equal 'molly-foo-bazmolly-foo-bar-baz'

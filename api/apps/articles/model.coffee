@@ -48,18 +48,7 @@ schema = (->
       url: @string().allow('', null)
     @object().keys
       type: @string().valid('slideshow')
-      items: @array().includes [
-        @object().keys
-          type: @string().valid('image')
-          url: @string().allow('', null)
-          caption: @string().allow('', null)
-        @object().keys
-          type: @string().valid('video')
-          url: @string().allow('', null)
-        @object().keys
-          type: @string().valid('artwork')
-          id: @string()
-      ]
+      items: @array()
   ]).default([])
   primary_featured_artist_ids: @array().includes @objectId()
   featured_artist_ids: @array().includes @objectId()
@@ -133,22 +122,20 @@ sortParamToQuery = (input) ->
 #
 @save = (input, cb) ->
   id = ObjectId (input.id or input._id)?.toString()
-  validate input, (err, input) =>
+  @validate input, (err, input) =>
     return cb err if err
     @find id.toString(), (err, article = {}) =>
       return cb err if err
       update article, input, (err, article) =>
         return cb err if err
-        db.articles.save _.extend(article,
-          _id: id
-          author_id: ObjectId(article.author_id)
-          fair_id: ObjectId(article.fair_id) if article.fair_id
-        ), cb
+        db.articles.save _.extend(article, _id: id), cb
 
-validate = (input, callback) ->
+@validate = (input, callback) ->
   whitelisted = _.pick input, _.keys schema
-  whitelisted.author_id = whitelisted.author_id?.toString()
-  Joi.validate whitelisted, schema, callback
+  Joi.validate whitelisted, schema, (err, article) ->
+    callback err, _.extend article,
+      author_id: ObjectId(article.author_id)
+      fair_id: ObjectId(article.fair_id) if article.fair_id
 
 update = (article, input, callback) ->
   article = _.extend article, input,

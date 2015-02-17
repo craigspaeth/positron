@@ -12,6 +12,7 @@ moment = require 'moment'
 glossary = require('glossary')(minFreq: 2, collapse: true, blacklist: [
   'art', 'I', 'sy', 'work', 'love', 'works', 'views', 'study', 'post', 'share'
 ])
+Article = require '../apps/articles/model'
 { ObjectId } = mongojs = require 'mongojs'
 { GRAVITY_MONGO_URL, GRAVITY_CLOUDFRONT_URL } = process.env
 gravity = null
@@ -202,11 +203,11 @@ postsToArticles = (posts, callback) ->
         )
         featured_artist_ids: (f.artist_id for f in artistFeatures)
         featured_artwork_ids: (f.artwork_id for f in artworkFeatures)
-        gravity_id: post._id
-        fair_id: fair?._id
+        gravity_id: post._id.toString()
+        fair_id: fair?._id.toString()
       # Callback with mapped data
       debug "Mapped #{_.last post._slugs}"
-      callback? null, data
+      Article.validate data, callback
   ), (err, articles) ->
     return callback(err) if err
     # Bulk update the mapped articles into Positron
