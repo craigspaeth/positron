@@ -60,14 +60,9 @@ module.exports = React.createClass
             </div>
             #{data.value}
           """
-      selected: @onSelect
-
-  onSelect: (e, selected) ->
-    new Artwork().fetch
-      url: "#{sd.ARTSY_URL}/api/v1/artwork/#{selected.id}"
-      success: (artwork) =>
-        @props.section.artworks.add artwork
-    $(@refs.autocomplete.getDOMNode()).val('').focus()
+      selected: (e, selected) =>
+        @fetchArtworks [selected.id]
+        $(@refs.autocomplete.getDOMNode()).val('').focus()
 
   toggleFillwidth: ->
     return unless @props.section.artworks.length
@@ -159,12 +154,13 @@ module.exports = React.createClass
       (if @props.section.artworks.length
         ul { className: 'esa-artworks-list', ref: 'artworks' },
           (@props.section.artworks.map (artwork, i) =>
+            console.log artwork.toJSON(), 'moo'
             li { key: i },
               div { className: 'esa-img-container' },
-                img { src: artwork.get('image_urls')?.large or artwork.attributes.images?[0]?.image_urls?.large }
+                img { src: artwork.imageUrl() }
               p {},
                 strong {}, artwork.get('artists')?[0]?.name
-              p {}, artwork.get('artwork')?.title or artwork.attributes?.title
+              p {}, artwork.get('artwork')?.title
               p {}, artwork.get('partner')?.name
               button {
                 className: 'edit-section-remove button-reset'

@@ -29,37 +29,39 @@ request = require 'superagent'
   findByIds 'artworks', ids, accessToken, (err, artworks) ->
     return callback err if err
 
-    # Fetch each artwork's artists & partner
-    async.parallel (for artwork in artworks
-      ((artwork) ->
-        (cb) ->
-          requests = []
-          requests.push(
-            (cb) ->
-              request
-                .get(artwork._links.artists.href)
-                .set('X-Access-Token': accessToken)
-                .end (err, res) -> cb err, res?.body._embedded.artists
-          ) if artwork._links.artists?
-          requests.push(
-            (cb) ->
-              request
-                .get(artwork._links.partner.href)
-                .set('X-Access-Token': accessToken)
-                .end (err, res) -> cb err, res?.body
-          ) if artwork._links.partner?
-          async.parallel requests, (err, [artists, partner]) ->
+    console.log _.compact(artworks).length
 
-            # Finally callback with our compiled data
-            cb err, {
-              id: artwork.id
-              artwork: artwork
-              artists: artists
-              partner: partner
-              image_urls: imageUrlsFor(artwork)
-            }
-      )(artwork)
-    ), (err, results) ->
+    # Fetch each artwork's artists & partner
+    async.map artworks, (artwork, cb) ->
+      requests = []
+      requests.push(
+        (cb) ->
+          request
+            .get(artwork._links.artists.href)
+            .set('X-Access-Token': accessToken)
+            .end (err, res) -> cb err, res?.body._embedded.artists
+      ) if artwork._links.artists?
+      requests.push(
+        (cb) ->
+          request
+            .get(artwork._links.partner.href)
+            .set('X-Access-Token': accessToken)
+            .end (err, res) -> cb err, res?.body
+      ) if artwork._links.partner?
+      async.parallel requests, (err, [artists, partner]) ->
+
+        console.log 'mooo', err, artwork?, artists?, partner?
+
+        # Finally callback with our compiled data
+        cb err, {
+          id: artwork.id
+          artwork: artwork
+          artists: artists
+          partner: partner
+          image_urls: imageUrlsFor(artwork)
+        }
+    , (err, results) ->
+      console.log _.compact(results).length
       callback null, results
 
 @search = (query, accessToken, callback) ->
