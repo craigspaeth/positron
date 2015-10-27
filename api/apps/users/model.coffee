@@ -17,9 +17,6 @@ bcrypt = require 'bcrypt'
 #
 # Retrieval
 #
-@find = (id, callback) ->
-  db.users.findOne { _id: ObjectId(id) }, callback
-
 @fromAccessToken = (accessToken, callback) ->
   # Find via access token from DB if they exist
   bcrypt.hash accessToken, SALT, (err, encryptedAccessToken) ->
@@ -57,7 +54,7 @@ bcrypt = require 'bcrypt'
       user = results[0].body
       save user, accessToken, callback
 
-save = (user, accessToken, callback) ->
+save = (user, accessToken, callback) =>
   async.parallel [
     (cb) ->
       bcrypt.hash accessToken, SALT, cb
@@ -65,11 +62,11 @@ save = (user, accessToken, callback) ->
       request
         .get("#{ARTSY_URL}/api/v1/profile/#{user.default_profile_id}")
         .set('X-Access-Token': accessToken).end cb
-  ], (err, results) ->
+  ], (err, results) =>
     return callback err if err
     encryptedAccessToken = results[0]
     profile = results[1].body
-    db.users.save {
+    user = {
       _id: ObjectId(user.id)
       name: user.name
       email: user.email
@@ -78,7 +75,17 @@ save = (user, accessToken, callback) ->
       profile_id: profile._id
       profile_icon_url: _.first(_.values(profile.icon?.image_urls))
       access_token: encryptedAccessToken
-    }, callback
+    }
+    async.parallel [
+      (cb) => db.users.save user, cb
+      (cb) =>
+        db.articles.update(
+          { author_id: ObjectId(user._id) }
+          { $set: { author: @denormalizedForArticle(user) } }
+          { multi: true }
+          cb
+        )
+    ], (err, [user]) => callback err, user
 
 #
 # JSON views

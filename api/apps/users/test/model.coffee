@@ -42,6 +42,15 @@ describe 'User', ->
           user.name.should.equal 'Craig Spaeth'
           done()
 
+    it 'updates denormalized authors in the background', (done) ->
+      fabricate 'users', { name: 'Molly', _id: ObjectId('4d8cd73191a5c50ce200002a') }, (err, user) ->
+        fabricate 'articles', { author_id: user._id }, ->
+          User.findOrInsert user._id.toString(), 'foobar', (err, user) ->
+            db.articles.findOne { author_id: user._id }, (err, article) ->
+              console.log article
+              article.author.name.should.equal 'Molly'
+              done()
+
   describe '#present', ->
 
     it 'converts _id to id', ->
