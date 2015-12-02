@@ -1,0 +1,80 @@
+@import '../stylus_lib'
+
+.edit-section-fullscreen
+  position relative
+
+.est-nav
+  fill-container()
+  height 40px
+  top -(@height - 1px)
+
+[data-useragent*=Firefox] .est-nav
+  height 41px
+
+.edit-section-image .edit-section-controls
+  fill-container()
+  background black
+  height 100vh
+  top -(@height + controls-padding)
+  left -(controls-padding)
+  padding controls-padding
+  display none
+  z-index 2
+  width overflow-width
+
+.esf-placeholder
+  text-align center
+  color gray-darker-color
+  height 200px
+  line-height @height
+
+.edit-section-container[data-editing=true]
+  .edit-section-controls
+    display block
+
+.esf-image
+  width 100%
+  transition opacity 0.5s
+
+#edit-thumbnail-upload
+  position relative
+  .upload-progress-container
+    display none
+
+.esf-caption
+  border 1px solid gray-darker-color !important
+  width 100%
+  background transparent
+  text-transform none
+  letter-spacing 0
+  cursor text
+  color white
+  a
+    color white
+  &.is-empty::before
+    content 'Add a caption'
+    color gray-dark-color
+    position absolute
+    text-align center
+    left 0
+    width 100%
+
+[data-useragent*=Firefox] .esf-caption
+  position absolute
+  width calc(100% - 40px)
+
+.esf-nav.edit-scribe-nav
+  margin 10px 0
+  button
+    padding 6px 20px
+    &::after
+      top 3px !important
+    svg
+      top 7px !important
+
+.esf-inline-caption
+  color gray-darker-color
+  margin-top 10px
+  font-style italic
+  a
+    color gray-darker-color
