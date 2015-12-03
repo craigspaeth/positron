@@ -12,8 +12,9 @@ gemup = require 'gemup'
 React = require 'react'
 toggleScribePlaceholder = require '../../lib/toggle_scribe_placeholder.coffee'
 sd = require('sharify').data
-{ div, section, h1, h2, span, img, header, input, nav, a, button, p } = React.DOM
+{ div, section, h1, h2, span, img, header, input, nav, a, button, p, textarea } = React.DOM
 { crop, resize, fill } = require('embedly-view-helpers')(sd.EMBEDLY_KEY)
+icons = -> require('./icons.jade') arguments...
 
 module.exports = React.createClass
 
@@ -37,6 +38,12 @@ module.exports = React.createClass
         background_url: @state.background_url
     else
       @props.section.destroy()
+
+  removeSection: ->
+    @props.section.destroy()
+
+  changeBackground: ->
+    console.log 'here'
 
   upload: (e) ->
     @props.setEditing(off)()
@@ -67,7 +74,7 @@ module.exports = React.createClass
 
   onEditableKeyup: ->
     toggleScribePlaceholder @refs.editable.getDOMNode()
-    @setState caption: $(@refs.editable.getDOMNode()).html()
+    @setState title: $(@refs.editable.getDOMNode()).html()
 
   render: ->
     section {
@@ -75,7 +82,16 @@ module.exports = React.createClass
       onClick: @props.setEditing(true)
     },
       div { className: 'edit-section-controls' },
-        div { className: 'esf-change-background'}, if @props.section.get('url') then '+ Change Background' else '+ Add Background'
+        div { className: 'esf-right-controls-container' },
+          input { type: 'file', onChange: @upload, hidden: true },
+            div {
+              className: 'esf-change-background'
+            }, (if @props.section.get('url') then '+ Change Background' else '+ Add Background')
+          button {
+            className: 'edit-section-remove button-reset'
+            dangerouslySetInnerHTML: __html: $(icons()).filter('.remove').html()
+            onClick: @removeSection
+          }
         div { className: 'esf-text-container' },
           input {
             className: 'esf-title'

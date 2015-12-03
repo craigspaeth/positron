@@ -1,8 +1,5 @@
 @import '../stylus_lib'
 
-.esf-change-background
-  float right
-
 .edit-section-fullscreen .edit-section-controls
   fill-container()
   position absolute
@@ -15,17 +12,36 @@
   width 100%
   height 800px
   background-color gray-lighter-color
+  position relative
+
+.edit-section-container-block
+  position relative
+  height 800px
 
 .edit-section-container[data-editing=true][data-type=fullscreen]
   height 800px
   width calc(100vw - 110px)
   margin-top -45px
-  margin-left 0px
   padding 0px
+  left 110px
+  position absolute
   &::after
     border 0
   .edit-section-controls
     display block
+
+.esf-right-controls-container
+  float right
+  margin-top 20px
+  .edit-section-remove
+    right 20px
+    top 20px
+    display inline-block
+  .esf-change-background
+    cursor pointer
+    avant-garde()
+    display inline-block
+    margin-right 75px
 
 .esf-image
   width 100%
