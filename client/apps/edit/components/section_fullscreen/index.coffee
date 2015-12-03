@@ -6,7 +6,6 @@
 # requiring it for testing in node.
 try
   Scribe = require 'scribe-editor'
-  scribePluginToolbar = require 'scribe-plugin-toolbar'
   scribePluginSanitizer = require '../../lib/sanitizer.coffee'
 _ = require 'underscore'
 gemup = require 'gemup'
@@ -64,7 +63,6 @@ module.exports = React.createClass
         i: true
         a: { href: true, target: '_blank' }
     }
-    @scribe.use scribePluginToolbar @refs.toolbar.getDOMNode()
     toggleScribePlaceholder @refs.editable.getDOMNode()
 
   onEditableKeyup: ->
@@ -76,21 +74,22 @@ module.exports = React.createClass
       className: 'edit-section-fullscreen'
       onClick: @props.setEditing(true)
     },
-      header { className: 'edit-section-controls' },
-        section { className: 'esf-background-upload-container' },
-          span { className: 'esf-change-background'}, if @props.section.get('url') then '+ Add Background' else '+ Change Background'
-        div { className: 'esf-caption-container' },
-          nav { ref: 'toolbar', className: 'edit-scribe-nav esf-nav' },
-            button {
-              'data-command-name': 'bold'
-              dangerouslySetInnerHTML: __html: '&nbsp;'
-              disabled: if @state.caption then false else true
-            }
-          div {
-            className: 'esf-caption bordered-input'
+      div { className: 'edit-section-controls' },
+        div { className: 'esf-change-background'}, if @props.section.get('url') then '+ Change Background' else '+ Add Background'
+        div { className: 'esf-text-container' },
+          input {
+            className: 'esf-title'
             ref: 'editable'
             onKeyUp: @onEditableKeyup
-            dangerouslySetInnerHTML: __html: @props.section.get('caption')
+            dangerouslySetInnerHTML: __html: @props.section.get('title')
+            placeholder: 'Title *'
+          }
+          input {
+            className: 'esf-intro'
+            ref: 'editable'
+            onKeyUp: @onEditableKeyup
+            dangerouslySetInnerHTML: __html: @props.section.get('intro')
+            placeholder: 'Introduction *'
           }
       (
         if @state.progress

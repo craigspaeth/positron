@@ -1,6 +1,7 @@
 @import '../stylus_lib'
 
 #edit-hero-section
+  // .edit-section-tool
   width body-width + (controls-padding * 2)
   margin 100px auto 20px auto
   .edit-section-tool:only-child:not([data-state-open="true"])
@@ -9,7 +10,7 @@
       display none
     &:hover
       fill-color black
-  .edit-section-container
+  .edit-section-container[data-type=video], .edit-section-container[data-type=image]
     min-height 400px
     width 1100px
     margin-left -280px

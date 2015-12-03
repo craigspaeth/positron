@@ -1,34 +1,29 @@
 @import '../stylus_lib'
 
-.edit-section-fullscreen
-  position relative
+.esf-change-background
+  float right
 
-.est-nav
+.edit-section-fullscreen .edit-section-controls
   fill-container()
-  height 40px
-  top -(@height - 1px)
-
-[data-useragent*=Firefox] .est-nav
-  height 41px
-
-.edit-section-image .edit-section-controls
-  fill-container()
-  background black
-  height 100vh
-  top -(@height + controls-padding)
-  left -(controls-padding)
-  padding controls-padding
-  display none
+  position absolute
+  top 0
+  left 0
   z-index 2
-  width overflow-width
+  display none
 
 .esf-placeholder
-  text-align center
-  color gray-darker-color
-  height 200px
-  line-height @height
+  width 100%
+  height 800px
+  background-color gray-lighter-color
 
-.edit-section-container[data-editing=true]
+.edit-section-container[data-editing=true][data-type=fullscreen]
+  height 800px
+  width calc(100vw - 110px)
+  margin-top -45px
+  margin-left 0px
+  padding 0px
+  &::after
+    border 0
   .edit-section-controls
     display block
 
@@ -36,13 +31,37 @@
   width 100%
   transition opacity 0.5s
 
+.esf-text-container
+  width 100%
+  margin auto
+  input
+    width 100%
+    text-align center
+    background-color transparent
+    border 0px
+    &:focus
+      outline none
+
+.esf-text-container.is-super-article
+  margin auto 0 auto 150px
+
+.esf-title
+  garamond 'xxl-headline'
+  font-style italic
+  display block
+
+.esf-intro
+  garamond()
+  font-size 25px
+  font-style italic
+  display block
+
 #edit-thumbnail-upload
   position relative
   .upload-progress-container
     display none
 
 .esf-caption
-  border 1px solid gray-darker-color !important
   width 100%
   background transparent
   text-transform none
