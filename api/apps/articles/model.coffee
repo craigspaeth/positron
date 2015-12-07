@@ -225,6 +225,9 @@ sortParamToQuery = (input) ->
     return callback err if err
     mergeArticleAndAuthor input, accessToken, (err, article, author, publishing) ->
       return callback(err) if err
+      # Merge fullscreen title with main article title
+      article.title = article.hero_section.title if article.hero_section?.type is 'fullscreen'
+      console.log article
       if publishing
         onPublish article, author, accessToken, sanitizeAndSave(callback)
       else if not publishing and not article.slugs?.length > 0

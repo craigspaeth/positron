@@ -17,6 +17,7 @@ sd = require('sharify').data
 { div, section, h1, h2, span, img, header, input, nav, a, button, p, textarea, video } = React.DOM
 { crop, resize, fill } = require('embedly-view-helpers')(sd.EMBEDLY_KEY)
 icons = -> require('./icons.jade') arguments...
+moment = require 'moment'
 
 keyboardShortcutsMap =
   bold: (e) -> e.metaKey and e.keyCode is 66
@@ -63,14 +64,7 @@ module.exports = React.createClass
         @onClickOff()
 
   attachScribe: ->
-    return if (@scribeTitle? and @scribeIntro?) or not @props.editing
-    @scribeTitle = new Scribe @refs.editableTitle.getDOMNode()
-    @scribeTitle.use scribePluginSanitizer {
-      tags:
-        p: true
-        b: true
-        i: true
-    }
+    return if @scribeIntro? or not @props.editing
     @scribeIntro = new Scribe @refs.editableIntro.getDOMNode()
     @scribeIntro.use scribePluginSanitizeGoogleDoc()
     @scribeIntro.use scribePluginSanitizer {
@@ -79,15 +73,13 @@ module.exports = React.createClass
         b: true
         i: true
     }
-    toggleScribePlaceholder @refs.editableTitle.getDOMNode()
     toggleScribePlaceholder @refs.editableIntro.getDOMNode()
     @scribeIntro.use scribePluginKeyboardShortcuts keyboardShortcutsMap
 
   onEditableKeyup: ->
-    toggleScribePlaceholder @refs.editableTitle.getDOMNode()
     toggleScribePlaceholder @refs.editableIntro.getDOMNode()
     @setState
-      title: $(@refs.editableTitle.getDOMNode()).html()
+      title: $(@refs.editableTitle.getDOMNode()).text()
       intro: $(@refs.editableIntro.getDOMNode()).html()
 
   render: ->
@@ -106,23 +98,25 @@ module.exports = React.createClass
             dangerouslySetInnerHTML: __html: $(icons()).filter('.remove').html()
             onClick: @removeSection
           }
-        div { className: 'esf-text-container' },
-          div {
-            className: 'esf-title'
+        div { className: "esf-text-container #{if sd.ARTICLE.is_super_article then 'is-super-article' else ''}" },
+          textarea {
+            className: 'esf-title invisible-input'
             ref: 'editableTitle'
+            placeholder: 'Title *'
             onKeyUp: @onEditableKeyup
-            dangerouslySetInnerHTML: __html: @props.section.get('title')
-            onClick: @props.setEditing(on)
-            onFocus: @props.setEditing(on)
-          }
+          }, @props.section.get('title')
+          (
+            unless sd.ARTICLE.is_super_article
+              div { className: 'edit-author-section'},
+                p {}, sd.ARTICLE.author.name if sd.ARTICLE.author
+                p {}, moment(sd.ARTICLE.published_at || moment()).format('MMM D, YYYY h:mm a')
+          )
           div {
             className: 'esf-intro'
             ref: 'editableIntro'
             placeholder: 'Introduction *'
             dangerouslySetInnerHTML: __html: @props.section.get('intro')
             onKeyUp: @onEditableKeyup
-            onClick: @props.setEditing(on)
-            onFocus: @props.setEditing(on)
           }
       (
         if @state.progress

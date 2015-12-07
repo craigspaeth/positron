@@ -29,6 +29,8 @@
     border 0
   .edit-section-controls
     display block
+  .edit-author-section
+    color white
 
 .edit-section-container[data-type=fullscreen][data-editing=false]
   .esf-change-background
@@ -87,23 +89,31 @@
   content attr('Introduction *')
 
 .esf-text-container.is-super-article
-  margin auto 0 auto 150px
+  margin-left 15%
+  left 0%
+  transform translate(0,-50%)
+  .esf-intro
+    margin-top 0px
+  .esf-title
+    text-align left
 
 .esf-title, .esf-intro
   cursor text
   width 100%
   display block
   font-style italic
-  min-height 1em
   position relative
   color white
 
-.esf-title
+textarea.esf-title
   garamond 'xxl-headline'
-  min-width 200px
-  &.is-empty::before
-    content 'Title *'
-    position absolute
+  overflow hidden
+  word-wrap break-word
+  resize horizontal
+  max-height 152px
+  text-align center
+  &::-webkit-input-placeholder
+    color white
 
 .esf-intro
   garamond()
