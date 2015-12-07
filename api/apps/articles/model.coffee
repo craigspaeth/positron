@@ -35,6 +35,14 @@ videoSection = (->
     cover_image_url: @string().allow('', null)
 ).call Joi
 
+fullscreenSection = (->
+  @object().keys
+    type: @string().valid('fullscreen')
+    title: @string().allow('',null)
+    intro: @string().allow('',null)
+    background_url: @string().allow('',null)
+).call Joi
+
 inputSchema = (->
   id: @objectId()
   author_id: @objectId().required()
@@ -49,7 +57,7 @@ inputSchema = (->
   scheduled_publish_at: @date().allow(null)
   lead_paragraph: @string().allow('', null)
   gravity_id: @objectId().allow('', null)
-  hero_section: @alternatives().try(videoSection, imageSection).allow(null)
+  hero_section: @alternatives().try(videoSection, imageSection, fullscreenSection).allow(null)
   sections: @array().items([
     imageSection
     videoSection
