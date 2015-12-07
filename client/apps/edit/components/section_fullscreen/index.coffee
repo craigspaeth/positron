@@ -40,14 +40,14 @@ module.exports = React.createClass
     @attachScribe()
 
   onClickOff: ->
-    if @state.background_url or @state.title or @state.intro
-      @props.section.set
-        title: @state.title
-        intro: @state.intro
-        background_url: @state.background_url
-      console.log @props
-    else
-      @removeSection()
+    @removeSection() unless @setSection()
+
+  setSection: ->
+    return false unless @state.background_url or @state.title or @state.intro
+    @props.section.set
+      title: @state.title
+      intro: @state.intro
+      background_url: @state.background_url
 
   removeSection: ->
     $('.edit-header-container').show()
@@ -87,6 +87,7 @@ module.exports = React.createClass
     section {
       className: 'edit-section-fullscreen'
       onClick: @props.setEditing(on)
+      onKeyUp: @setSection
     },
       div { className: 'edit-section-controls' },
         div { className: 'esf-right-controls-container' },
