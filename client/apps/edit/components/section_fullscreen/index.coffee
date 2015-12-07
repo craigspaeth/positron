@@ -45,6 +45,7 @@ module.exports = React.createClass
         title: @state.title
         intro: @state.intro
         background_url: @state.background_url
+      console.log @props
     else
       @removeSection()
 
@@ -79,7 +80,7 @@ module.exports = React.createClass
   onEditableKeyup: ->
     toggleScribePlaceholder @refs.editableIntro.getDOMNode()
     @setState
-      title: $(@refs.editableTitle.getDOMNode()).text()
+      title: $(@refs.editableTitle.getDOMNode()).val()
       intro: $(@refs.editableIntro.getDOMNode()).html()
 
   render: ->
@@ -114,7 +115,6 @@ module.exports = React.createClass
           div {
             className: 'esf-intro'
             ref: 'editableIntro'
-            placeholder: 'Introduction *'
             dangerouslySetInnerHTML: __html: @props.section.get('intro')
             onKeyUp: @onEditableKeyup
           }
