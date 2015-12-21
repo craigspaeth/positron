@@ -69,16 +69,16 @@ inputSchema = (->
       hide_image: @boolean().default(false)
     @object().keys
       type: @string().valid('embed')
-      url: @string().allow('',null)
-      height: @string().allow('',null)
-      layout: @string().allow('',null)
+      url: @string().allow('')
+      height: @string().allow('')
+      layout: @string().allow('overflow_fillwidth', 'column_width', '')
     @object().keys
       type: @string().valid('text')
-      body: @string().allow('', null)
+      body: @string().allow('')
     @object().keys
       type: @string().valid('artworks')
       ids: @array().items(@objectId())
-      layout: @string().allow('overflow_fillwidth', 'column_width', null)
+      layout: @string().allow('overflow_fillwidth', 'column_width', '')
     @object().keys
       type: @string().valid('slideshow')
       items: @array().items [
@@ -331,6 +331,8 @@ generateKeywords = (article, accessToken, cb) ->
 # TODO: Create a Joi plugin for this https://github.com/hapijs/joi/issues/577
 sanitize = (article) ->
   sanitized = _.extend article,
+    title: sanitizeHtml article.title
+    thumbnail_title: sanitizeHtml article.thumbnail_title
     lead_paragraph: sanitizeHtml article.lead_paragraph
     sections: for section in article.sections
       section.body = sanitizeHtml section.body if section.type is 'text'
