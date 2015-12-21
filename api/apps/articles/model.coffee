@@ -33,6 +33,8 @@ videoSection = (->
     type: @string().valid('video')
     url: @string().allow('', null)
     cover_image_url: @string().allow('', null)
+    layout: @string().allow('',null)
+    background_color: @string().allow('',null)
 ).call Joi
 
 fullscreenSection = (->
@@ -69,16 +71,16 @@ inputSchema = (->
       hide_image: @boolean().default(false)
     @object().keys
       type: @string().valid('embed')
-      url: @string().allow('')
-      height: @string().allow('')
-      layout: @string().allow('overflow_fillwidth', 'column_width', '')
+      url: @string().allow('',null)
+      height: @string().allow('',null)
+      layout: @string().allow('',null)
     @object().keys
       type: @string().valid('text')
-      body: @string().allow('')
+      body: @string().allow('', null)
     @object().keys
       type: @string().valid('artworks')
       ids: @array().items(@objectId())
-      layout: @string().allow('overflow_fillwidth', 'column_width', '')
+      layout: @string().allow('overflow_fillwidth', 'column_width', null)
     @object().keys
       type: @string().valid('slideshow')
       items: @array().items [
@@ -127,6 +129,7 @@ inputSchema = (->
     secondary_logo_link: @string().allow('',null)
     footer_blurb: @string().allow('',null)
     related_articles: @array().items(@objectId()).allow(null)
+  share_description: @string().allow('',null)
 ).call Joi
 
 querySchema = (->
